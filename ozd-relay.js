@@ -17,7 +17,7 @@ program
 
         if (arg) {
             const fieldOnly = relayers.map(relayer => relayer[arg]);
-            console.log(fieldOnly);
+            console.log(JSON.stringify(fieldOnly));
         } else {
             console.log(JSON.stringify(relayers));
         }
@@ -70,6 +70,19 @@ program
         console.debug(`Setting gas cap to ${newGasCapWei} wei for relayer ${relayerId}`);
         try {
             await relayClient.update(relayerId, { policies: { gasPriceCap: newGasCapWei } });
+        } catch (e) {
+            console.error(e);
+        }
+    })
+
+program
+    .command('EIP1559Pricing <relayerId> <true|false>')
+    .description('enable or disable EIP1559Pricing for a particular relayer')
+    .action(async (relayerId, enabled) => {
+        const enabledBool = enabled === "true";
+        console.debug(`Setting EIP1559Pricing to ${enabledBool} for relayer ${relayerId}`);
+        try {
+            await relayClient.update(relayerId, { policies: { EIP1559Pricing: enabledBool } });
         } catch (e) {
             console.error(e);
         }
