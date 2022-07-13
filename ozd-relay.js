@@ -19,7 +19,7 @@ program
             const fieldOnly = relayers.map(relayer => relayer[arg]);
             console.log(fieldOnly);
         } else {
-            console.log(relayers);
+            console.log(JSON.stringify(relayers));
         }
     });
 
@@ -62,5 +62,17 @@ program
         console.error("Deleting relayers is only supported in the console");
     });
 
+program
+    .command('gasPriceCap <relayerId> <newGasCapGwei>')
+    .description('sets the gas cap in gwei for a particular relayer')
+    .action(async (relayerId, newGasCapGwei) => {
+        const newGasCapWei = newGasCapGwei + "000000000";
+        console.debug(`Setting gas cap to ${newGasCapWei} wei for relayer ${relayerId}`);
+        try {
+            await relayClient.update(relayerId, { policies: { gasPriceCap: newGasCapWei } });
+        } catch (e) {
+            console.error(e);
+        }
+    })
 
 program.parse();

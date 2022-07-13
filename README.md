@@ -40,6 +40,29 @@ ozd-relay list
 ozd-relay list address
 ```
 
+## Cookbook
+
+> Filter all relayers by network:
+
+```sh
+ozd-relay list | jq 'map(select(.network == "matic"))' | tee polygon-relayers.json
+```
+
+> List all relayer ids on a specific network:
+
+```sh
+ozd-relay list | jq 'map(select(.network == "matic")) | map(.relayerId)'
+```
+
+> Bulk update the gas price cap on a network:
+
+```sh
+for relayerId in $(jq --raw-output '.[] | .relayerId' polygon-relayers.json) ; do
+  ozd-relay updateGasPriceCap $relayerId 500 ;
+done
+```
+
+
 ## Troubleshooting
 
 > `command not found: ozd-relay`
