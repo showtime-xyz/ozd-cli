@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-import { RelayClient } from 'defender-relay-client';
+import { RelayClient, Relayer } from 'defender-relay-client';
 import { config } from 'dotenv';
 import { program } from 'commander';
 
@@ -86,6 +86,15 @@ program
         } catch (e) {
             console.error(e);
         }
+    })
+
+program
+    .command('listTransactions <relayerName> <pending|mined|failed>')
+    .description('list transactions for this relayer name (not the relayerId)')
+    .action(async (relayerName, status) => {
+        let relayer = new Relayer({ apiKey: process.env[relayerName + '_API_KEY'], apiSecret: process.env[relayerName + '_API_SECRET'] });
+        let response = await relayer.list({status: status, limit: 100});
+        console.log(JSON.stringify(response));
     })
 
 program.parse();
